@@ -1,0 +1,64 @@
+<%- include('../../partials/siteHeader', {pageTitle: "Movies"}) %>
+
+<!-- Lab: search by part of title OR part of a cast name -->
+<section class="searchBar">
+    <form action="/moviesSearch" method="GET">
+        <div class="input-group">
+            <input type="text" class="form-control" placeholder="Search by movie title or actor name..."
+                name="q" value="<%= q %>" required>
+            <button class="btn btn-primary" type="submit">Search</button>
+        </div>
+    </form>
+</section>
+
+<!-- Homework: genre buttons -->
+<section class="genreButtons">
+    <a href="/movies" class="btn <%= (activeGenre === '' && q === '') ? 'btn-dark' : 'btn-outline-dark' %>">All</a>
+    <% genres.forEach(function(genre) { %>
+        <a href="/movies/genre/<%= genre.toLowerCase() %>"
+            class="btn <%= activeGenre === genre ? 'btn-dark' : 'btn-outline-dark' %>"><%= genre %></a>
+    <% }); %>
+</section>
+
+<section class="container-fluid">
+    <h2 class="my-3"><%= heading %></h2>
+
+    <% if (movies.length === 0) { %>
+        <div class="alert alert-warning">No movies found.</div>
+    <% } %>
+
+    <div class="row">
+        <% movies.forEach(function(movie) { %>
+            <div class="col-6 col-md-4 col-lg-3">
+                <div class="card mb-4 shadow-sm h-100">
+                    <img src="<%= movie.thumbnail || '/img/logo.png' %>" class="card-img-top moviePoster"
+                        alt="<%= movie.title %>" onerror="this.onerror=null;this.src='/img/logo.png';">
+                    <div class="card-body">
+                        <h5 class="card-title"><%= movie.title %></h5>
+                        <h6 class="card-subtitle mb-2 text-muted"><%= movie.year %></h6>
+
+                        <% (movie.genres || []).forEach(function(g) { %>
+                            <span class="badge bg-secondary"><%= g %></span>
+                        <% }); %>
+
+                        <% if (movie.cast && movie.cast.length > 0) { %>
+                            <p class="card-text small mt-2 mb-0">
+                                <%= movie.cast.slice(0, 3).join(', ') %><%= movie.cast.length > 3 ? '...' : '' %>
+                            </p>
+                        <% } %>
+                    </div>
+                    <div class="card-footer d-flex gap-1">
+                        <a href="/movies/show/<%= movie._id %>" class="btn btn-sm btn-outline-primary">Details</a>
+                        <a href="/movies/updateForm/<%= movie._id %>" class="btn btn-sm btn-outline-secondary">Edit</a>
+                        <form action="/movies/destroy/<%= movie._id %>" method="POST" class="d-inline"
+                            onsubmit="return confirm('Are you sure you want to delete this movie?');">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        <% }); %>
+    </div>
+</section>
+
+<%- include('../../partials/siteFooter') %>

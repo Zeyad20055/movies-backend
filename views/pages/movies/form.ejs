@@ -1,0 +1,90 @@
+<%- include('../../partials/siteHeader', {pageTitle: pageTitle}) %>
+
+<section class="container">
+    <h2 class="mb-3"><%= heading %></h2>
+
+    <% if (errors.length > 0) { %>
+        <div class="alert alert-danger">
+            <ul class="mb-0">
+                <% errors.forEach(function(e) { %><li><%= e %></li><% }); %>
+            </ul>
+        </div>
+    <% } %>
+
+    <%
+        const isLink = typeof movie.thumbnail === 'string' && /^https?:\/\//i.test(movie.thumbnail);
+    %>
+
+    <div class="row">
+        <div class="col-md-7">
+            <form action="<%= action %>" method="POST" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="title" class="form-label">Title</label>
+                    <input type="text" class="form-control" name="title" id="title" required
+                        value="<%= movie.title || '' %>">
+                </div>
+
+                <div class="mb-3">
+                    <label for="year" class="form-label">Year</label>
+                    <input type="number" class="form-control" name="year" id="year" required
+                        value="<%= movie.year !== undefined ? movie.year : '' %>">
+                </div>
+
+                <div class="mb-3">
+                    <label for="genres" class="form-label">Genres <small class="text-muted">(separate with commas)</small></label>
+                    <input type="text" class="form-control" name="genres" id="genres" placeholder="Action, Drama"
+                        value="<%= (movie.genres || []).join(', ') %>">
+                </div>
+
+                <div class="mb-3">
+                    <label for="cast" class="form-label">Cast <small class="text-muted">(separate with commas)</small></label>
+                    <input type="text" class="form-control" name="cast" id="cast" placeholder="Tom Hanks, Meg Ryan"
+                        value="<%= (movie.cast || []).join(', ') %>">
+                </div>
+
+                <div class="mb-3">
+                    <label for="thumbnail" class="form-label">Thumbnail link</label>
+                    <input type="text" class="form-control" name="thumbnail" id="thumbnail" placeholder="https://..."
+                        value="<%= isLink ? movie.thumbnail : '' %>">
+                </div>
+
+                <div class="mb-3">
+                    <label for="thumbnailFile" class="form-label">or upload an image
+                        <small class="text-muted">(if you choose a file it is used instead of the link; leave both empty to keep the current thumbnail)</small>
+                    </label>
+                    <input type="file" class="form-control" name="thumbnailFile" id="thumbnailFile" accept="image/*"
+                        onchange="photoPreviewFn(this);">
+                </div>
+
+                <button type="submit" class="btn btn-primary">Save</button>
+                <a href="/movies" class="btn btn-outline-dark">Cancel</a>
+            </form>
+        </div>
+
+        <div class="col-md-5 text-center">
+            <img src="<%= movie.thumbnail || '/img/logo.png' %>" id="photoPreview" alt="thumbnail preview"
+                class="img-fluid rounded shadow-sm" style="max-height: 420px;"
+                onerror="this.onerror=null;this.src='/img/logo.png';">
+        </div>
+    </div>
+</section>
+
+<script>
+    // preview of the chosen file
+    function photoPreviewFn(inputFile) {
+        var file = inputFile.files[0];
+        if (file) {
+            var reader = new FileReader();
+            reader.onload = function () {
+                document.getElementById("photoPreview").setAttribute("src", reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+    // preview of the typed link
+    document.getElementById("thumbnail").addEventListener("change", function () {
+        if (this.value) document.getElementById("photoPreview").setAttribute("src", this.value);
+    });
+</script>
+
+<%- include('../../partials/siteFooter') %>

@@ -1,0 +1,34 @@
+body {
+    margin: 0 4%;
+}
+
+.siteNav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 10px;
+}
+
+.siteNav .brand {
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-decoration: none;
+    color: #212529;
+}
+
+.searchBar {
+    max-width: 700px;
+    margin: 0 auto 15px auto;
+}
+
+.genreButtons {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.moviePoster {
+    height: 320px;
+    object-fit: cover;
+}
